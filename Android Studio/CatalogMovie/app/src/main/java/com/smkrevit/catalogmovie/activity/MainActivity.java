@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 
 import com.smkrevit.catalogmovie.R;
 import com.smkrevit.catalogmovie.adapter.MovieAdapter;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
+import com.smkrevit.catalogmovie.model.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     String LANGUAGE = "en-US";
     String CATEGORY = "popular";
     int PAGE = 1;
-    RecyclerView recyclerView
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
         Call<Response> call = apiInterface.getMovie(CATEGORY, API_KEY, LANGUAGE, PAGE);
         call.enqueue(new Callback<Response>() {
             @Override
-            public void onResponse(Call<Response> call, Response<Response> response) {
-                List<Result> mList = response.body().getResults();
-                adapter = new MovieAdapter(MainActivity.this, mList);
-                recyclerView.setAdapter(adapter);
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+             List<Result> mList = response.body().getResults();
+             adapter = new MovieAdapter(MainActivity.this, mList);
+             recyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -71,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String newText) {
                 if (newText.length() > 1) {
                     ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
                     Call<Response> call = apiInterface.getQuery(API_KEY, LANGUAGE, newText, PAGE);
                     call.enqueue(new Callback<Response>() {
                         @Override
-                        public void onResponse(Call<Response> call, Response<Response> response) {
+                        public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                             List<Result> mList = response.body().getResults();
                             adapter = new MovieAdapter(MainActivity.this, mList);
                             recyclerView.setAdapter(adapter);
